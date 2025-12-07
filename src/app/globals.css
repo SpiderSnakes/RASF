@@ -1,0 +1,98 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  --primary: #1e40af;
+  --primary-foreground: #ffffff;
+}
+
+/* Desactiver le mode sombre automatique - forcer mode clair */
+html {
+  color-scheme: light;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Forcer les couleurs des inputs */
+input, select, textarea {
+  color: #111827 !important;
+  background-color: #ffffff !important;
+}
+
+input::placeholder {
+  color: #9ca3af !important;
+}
+
+@layer components {
+  /* Styles pour les badges de mode de consommation */
+  .badge-surplace {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800;
+  }
+
+  .badge-emporter {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800;
+  }
+
+  /* Styles pour les statuts de réservation */
+  .status-booked {
+    @apply text-green-600;
+  }
+
+  .status-served {
+    @apply text-blue-600;
+  }
+
+  .status-noshow {
+    @apply text-red-600;
+  }
+
+  /* Utilitaires pour les cartes de menu */
+  .menu-card {
+    @apply rounded-lg border border-gray-200 bg-white p-4 shadow-sm transition-shadow hover:shadow-md;
+  }
+
+  .menu-card-selected {
+    @apply ring-2 ring-rasf-600 ring-offset-2;
+  }
+}
+
+/* Focus visible pour l'accessibilite */
+:focus-visible {
+  @apply outline-none ring-2 ring-rasf-500 ring-offset-2;
+}
+
+/* Animation slide-up pour le prompt PWA */
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.3s ease-out;
+}
