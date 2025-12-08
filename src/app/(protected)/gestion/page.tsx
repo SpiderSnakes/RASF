@@ -4,7 +4,7 @@
 // Page Gestion RASF - Tableau de bord
 // =============================================================================
 
-import { useState, useEffect } from "react";
+import { useMemo, useState, useEffect } from "react";
 import Link from "next/link";
 import { format, startOfWeek, addDays, parseISO, isSameDay } from "date-fns";
 import { fr } from "date-fns/locale";
@@ -28,7 +28,10 @@ export default function GestionPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const weekDays = Array.from({ length: 5 }, (_, i) => addDays(weekStart, i));
+  const weekDays = useMemo(
+    () => Array.from({ length: 5 }, (_, i) => addDays(weekStart, i)),
+    [weekStart]
+  );
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -68,7 +71,7 @@ export default function GestionPage() {
     };
 
     fetchStats();
-  }, [weekStart]);
+  }, [weekDays, weekStart]);
 
   const totalWeek = stats.reduce((acc, s) => acc + s.total, 0);
   const totalSurPlace = stats.reduce((acc, s) => acc + s.surPlace, 0);

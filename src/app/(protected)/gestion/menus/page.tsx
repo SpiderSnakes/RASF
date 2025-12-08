@@ -4,7 +4,7 @@
 // Page Gestion - Liste et création des menus
 // =============================================================================
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { format, startOfWeek, addWeeks, addDays, parseISO, isSameDay } from "date-fns";
 import { fr } from "date-fns/locale";
 import { PageHeader } from "@/components/layout/page-header";
@@ -47,7 +47,10 @@ export default function MenusPage() {
   const [selectedMenu, setSelectedMenu] = useState<Menu | null>(null);
   const [showDuplicateModal, setShowDuplicateModal] = useState(false);
 
-  const weekDays = Array.from({ length: 5 }, (_, i) => addDays(currentWeekStart, i));
+  const weekDays = useMemo(
+    () => Array.from({ length: 5 }, (_, i) => addDays(currentWeekStart, i)),
+    [currentWeekStart]
+  );
 
   // Eviter les mismatches SSR/CSR (hydratation) en fixant la date apres montage
   useEffect(() => {
@@ -96,9 +99,20 @@ export default function MenusPage() {
     setSelectedMenu(null);
   };
 
-  const handleSuccess = () => {
-    fetchMenus();
+  const handleSuccess = (menu: Menu) => {
+    setMenus((prev) => {
+      const existingIndex = prev.findIndex((m) => m.id === menu.id);
+      const nextMenus = existingIndex >= 0
+        ? prev.map((m, idx) => (idx === existingIndex ? menu : m))
+        : [...prev, menu];
+
+      return nextMenus.sort(
+        (a, b) => parseISO(a.date).getTime() - parseISO(b.date).getTime()
+      );
+    });
+
     handleModalClose();
+    fetchMenus();
   };
 
   const handleTogglePublish = async (menu: Menu) => {
@@ -114,6 +128,11 @@ export default function MenusPage() {
         throw new Error(data.error);
       }
 
+      setMenus((prev) =>
+        prev.map((m) =>
+          m.id === menu.id ? { ...m, isPublished: !menu.isPublished } : m
+        )
+      );
       fetchMenus();
     } catch (err) {
       setError("Erreur lors de la mise à jour");
@@ -133,6 +152,11 @@ export default function MenusPage() {
         throw new Error(data.error);
       }
 
+      setMenus((prev) => prev.filter((m) => m.id !== menu.id));
+      if (selectedMenu?.id === menu.id) {
+        setSelectedMenu(null);
+        setSelectedDate(null);
+      }
       fetchMenus();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erreur lors de la suppression");

@@ -10,6 +10,7 @@ import { fr } from "date-fns/locale";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Alert } from "@/components/ui/alert";
+import type { ApiResponse } from "@/lib/api-utils";
 
 interface MenuOption {
   id?: string;
@@ -24,6 +25,7 @@ interface Menu {
   sideDishes: string | null;
   notes: string | null;
   isPublished: boolean;
+  options: MenuOption[];
   starters: MenuOption[];
   mains: MenuOption[];
   desserts: MenuOption[];
@@ -34,8 +36,19 @@ interface MenuFormModalProps {
   onClose: () => void;
   date: Date;
   existingMenu: Menu | null;
-  onSuccess: () => void;
+  onSuccess: (menu: Menu) => void;
 }
+
+const normalizeMenu = (menu: Menu): Menu => {
+  const options = menu.options || [];
+  return {
+    ...menu,
+    options,
+    starters: options.filter((o) => o.courseType === "STARTER"),
+    mains: options.filter((o) => o.courseType === "MAIN"),
+    desserts: options.filter((o) => o.courseType === "DESSERT"),
+  };
+};
 
 export function MenuFormModal({
   isOpen,
@@ -173,13 +186,13 @@ export function MenuFormModal({
         body: JSON.stringify(payload),
       });
 
-      const data = await res.json();
+      const data: ApiResponse<Menu> = await res.json();
 
-      if (!res.ok) {
-        throw new Error(data.error || "Erreur lors de la sauvegarde");
+      if (!res.ok || !data.success) {
+        throw new Error((data as { error?: string }).error || "Erreur lors de la sauvegarde");
       }
 
-      onSuccess();
+      onSuccess(normalizeMenu(data.data));
     } catch (err) {
       setError(err instanceof Error ? err.message : "Une erreur est survenue");
     } finally {

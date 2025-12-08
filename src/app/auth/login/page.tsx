@@ -4,9 +4,9 @@
 // Page de connexion
 // =============================================================================
 
-import { useState, Suspense } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { signIn } from "next-auth/react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,14 +15,21 @@ import { Card } from "@/components/ui/card";
 
 function LoginForm() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
-  const error = searchParams.get("error");
-
+  const [callbackUrl, setCallbackUrl] = useState("/dashboard");
+  const [urlError, setUrlError] = useState<string | null>(null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [loginError, setLoginError] = useState<string | null>(null);
+
+  // Lire les paramètres d'URL une seule fois pour éviter les erreurs d'hydratation
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    setCallbackUrl(params.get("callbackUrl") || "/dashboard");
+    setUrlError(params.get("error"));
+  }, []);
+
+  const displayError = useMemo(() => loginError || urlError, [loginError, urlError]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -67,9 +74,9 @@ function LoginForm() {
           </h2>
 
           {/* Messages d'erreur */}
-          {(error || loginError) && (
+          {displayError && (
             <Alert variant="error" className="mb-4">
-              {loginError || "Erreur de connexion. Veuillez réessayer."}
+              {displayError || "Erreur de connexion. Veuillez réessayer."}
             </Alert>
           )}
 
@@ -121,14 +128,6 @@ function LoginForm() {
 }
 
 export default function LoginPage() {
-  return (
-    <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-rasf-50 to-rasf-100">
-        <div className="w-8 h-8 border-4 border-rasf-500 border-t-transparent rounded-full animate-spin" />
-      </div>
-    }>
-      <LoginForm />
-    </Suspense>
-  );
+  return <LoginForm />;
 }
 
