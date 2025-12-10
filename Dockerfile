@@ -1,74 +1,57 @@
-# =============================================================================
-# Dockerfile pour l'application RASF
-# Optimisé pour le déploiement avec Coolify
-# =============================================================================
+# ================================
+# Étape 1 : deps (install des deps)
+# ================================
+FROM node:22-alpine AS deps
+WORKDIR /app
 
-# -----------------------------------------------------------------------------
-# Étape 1 : Installation des dépendances
-# -----------------------------------------------------------------------------
-FROM node:20-alpine AS deps
 RUN apk add --no-cache libc6-compat
+RUN corepack enable
+
+# Copie des fichiers nécessaires pour l'install
+COPY package.json pnpm-lock.yaml* ./
+
+# Install des dépendances (en prod)
+RUN pnpm install --frozen-lockfile
+
+# ================================
+# Étape 2 : build
+# ================================
+FROM node:22-alpine AS builder
 WORKDIR /app
 
-# Copier les fichiers de dépendances
-COPY package.json package-lock.json* ./
-COPY prisma ./prisma/
+RUN apk add --no-cache libc6-compat
+RUN corepack enable
 
-# Installer les dépendances
-RUN npm ci
-
-# Générer le client Prisma
-RUN npx prisma generate
-
-# -----------------------------------------------------------------------------
-# Étape 2 : Build de l'application
-# -----------------------------------------------------------------------------
-FROM node:20-alpine AS builder
-WORKDIR /app
-
-# Copier les dépendances installées
+# On récupère les node_modules de l'étape deps
 COPY --from=deps /app/node_modules ./node_modules
+
+# On copie le reste du projet
 COPY . .
 
-# Variables d'environnement pour le build
+# Prisma (si tu l'utilises)
+RUN pnpm prisma generate || echo "Prisma generate skipped"
+
+# Build de l’app (Next.js)
 ENV NEXT_TELEMETRY_DISABLED=1
-ENV NODE_ENV=production
+RUN pnpm run build
 
-# Build de l'application
-RUN npm run build
-
-# -----------------------------------------------------------------------------
-# Étape 3 : Image de production
-# -----------------------------------------------------------------------------
-FROM node:20-alpine AS runner
+# ================================
+# Étape 3 : runtime
+# ================================
+FROM node:22-alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
-
-# Créer un utilisateur non-root pour la sécurité
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
-
-# Copier les fichiers nécessaires
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/prisma ./prisma
-
-# Copier le build standalone
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-
-# Copier le client Prisma généré
-COPY --from=deps /app/node_modules/.prisma ./node_modules/.prisma
-COPY --from=deps /app/node_modules/@prisma ./node_modules/@prisma
-
-USER nextjs
-
-EXPOSE 3000
-
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
-# Commande de démarrage
-CMD ["node", "server.js"]
+# Copie uniquement ce qui est nécessaire
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./package.json
 
+EXPOSE 3000
+
+CMD ["pnpm", "run", "start"]
