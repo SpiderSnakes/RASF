@@ -3,7 +3,7 @@ import { prisma } from "@/lib/db";
 import { MenusClient, MenuWithCourses } from "./menus-client";
 
 type Props = {
-  searchParams?: { week?: string };
+  searchParams?: Promise<{ week?: string }>;
 };
 
 function getWeekStart(searchWeek?: string) {
@@ -17,7 +17,8 @@ function getWeekStart(searchWeek?: string) {
 }
 
 export default async function MenusPage({ searchParams }: Props) {
-  const weekStart = getWeekStart(searchParams?.week);
+  const resolvedSearchParams = searchParams ? await searchParams : undefined;
+  const weekStart = getWeekStart(resolvedSearchParams?.week);
   const weekDays = Array.from({ length: 5 }, (_, i) => addDays(weekStart, i));
 
   const menusData = await prisma.menu.findMany({

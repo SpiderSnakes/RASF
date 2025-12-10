@@ -10,9 +10,8 @@ if (!databaseUrl) {
 }
 
 export default defineConfig({
-  schemas: ["./prisma/schema.prisma"],
+  schema: "./prisma/schema.prisma",
   datasource: {
-    provider: "postgresql",
     url: databaseUrl,
   },
 });

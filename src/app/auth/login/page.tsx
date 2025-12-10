@@ -66,7 +66,6 @@ function LoginForm() {
             Connexion
           </h2>
 
-          {/* Messages d'erreur */}
           {(error || loginError) && (
             <Alert variant="error" className="mb-4">
               {loginError || "Erreur de connexion. Veuillez réessayer."}

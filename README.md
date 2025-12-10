@@ -34,7 +34,7 @@ Application web de reservation de repas pour le Restaurant Administratif de Sain
 - **ORM** : Prisma
 - **Authentification** : NextAuth.js v4
 - **UI** : Tailwind CSS
-- **PWA** : @ducanh2912/next-pwa
+- **PWA** : @serwist/next
 
 ## Prerequis
 

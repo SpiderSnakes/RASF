@@ -37,6 +37,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             ${error ? "border-red-500" : "border-gray-300"}
             ${className}
           `}
+          suppressHydrationWarning
           {...props}
         />
         {error && <p className="mt-1 text-sm text-red-600">{error}</p>}

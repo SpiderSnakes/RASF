@@ -128,6 +128,25 @@ Configurer l'application comme une PWA installable sur mobile avec cache offline
 
 ### Fichiers modifies
 - `next.config.mjs` (configuration PWA)
+
+---
+
+## 10/12/2025 – Migration PWA vers Serwist
+
+### Objectif
+Remplacer `@ducanh2912/next-pwa` par `@serwist/next` (recommandation dev) et sécuriser le SW.
+
+### Actions realisees
+- Remplacement du plugin PWA par `@serwist/next` avec build injectManifest.
+- Ajout d'un service worker dédié `src/sw.ts` (precache + caches runtime fonts/images/APIs).
+- MAJ des dépendances avec `^` pour recevoir les patchs (next/react/react-dom/prisma).
+- Nettoyage de la config Next (`next.config.mjs`) pour utiliser Serwist.
+
+### Fichiers modifies / ajoutes
+- `next.config.mjs` (Serwist)
+- `src/sw.ts` (service worker Serwist)
+- `package.json` (dépendances Serwist + ^)
+- `README.md` (PWA -> Serwist)
 - `src/app/layout.tsx` (meta tags)
 - `src/app/(protected)/layout.tsx` (InstallPrompt)
 - `src/app/globals.css` (animation slide-up)

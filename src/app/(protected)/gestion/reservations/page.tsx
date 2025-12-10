@@ -3,11 +3,12 @@ import { prisma } from "@/lib/db";
 import { ReservationsClient } from "./reservations-client";
 
 type Props = {
-  searchParams?: { date?: string };
+  searchParams?: Promise<{ date?: string }>;
 };
 
 export default async function ReservationsPage({ searchParams }: Props) {
-  const selectedDate = searchParams?.date || new Date().toISOString().slice(0, 10);
+  const resolvedSearchParams = searchParams ? await searchParams : undefined;
+  const selectedDate = resolvedSearchParams?.date || new Date().toISOString().slice(0, 10);
   const parsedDate = parseISO(selectedDate);
 
   const reservationsData = await prisma.reservation.findMany({

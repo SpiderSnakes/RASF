@@ -104,7 +104,7 @@ Ce document suit l'avancement du projet de réservation de repas pour le RASF (R
 ### Phase 4 – Finalisation
 
 - [x] **Étape 10** – PWA (Progressive Web App) ✅
-  - [x] Installation @ducanh2912/next-pwa
+  - [x] Installation @serwist/next
   - [x] Configuration manifest.json
   - [x] Generation des icones (script + sharp)
   - [x] Service worker avec cache strategies

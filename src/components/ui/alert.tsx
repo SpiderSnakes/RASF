@@ -2,7 +2,7 @@
 // Composant Alert
 // =============================================================================
 
-import { HTMLAttributes, forwardRef } from "react";
+import { HTMLAttributes, ReactElement, forwardRef } from "react";
 
 type AlertVariant = "info" | "success" | "warning" | "error";
 
@@ -30,7 +30,7 @@ const variantStyles: Record<AlertVariant, { container: string; icon: string }> =
   },
 };
 
-const icons: Record<AlertVariant, JSX.Element> = {
+const icons: Record<AlertVariant, ReactElement> = {
   info: (
     <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
       <path

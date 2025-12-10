@@ -1,0 +1,7 @@
+1:"$Sreact.fragment"
+2:I[484,[],"ViewportBoundary"]
+4:I[484,[],"MetadataBoundary"]
+5:"$Sreact.suspense"
+0:{"buildId":"IaCy-OSNhkXyGz3FvYlWV","rsc":["$","$1","h",{"children":[null,["$","$L2",null,{"children":"$@3"}],["$","div",null,{"hidden":true,"children":["$","$L4",null,{"children":["$","$5",null,{"name":"Next.Metadata","children":"$@6"}]}]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}],"loading":null,"isPartial":false}
+3:[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"}],["$","meta","2",{"name":"theme-color","media":"(prefers-color-scheme: light)","content":"#1e40af"}],["$","meta","3",{"name":"theme-color","media":"(prefers-color-scheme: dark)","content":"#1e3a8a"}]]
+6:[["$","title","0",{"children":"Mentions legales | RASF"}],["$","meta","1",{"name":"description","content":"Mentions legales de l'application RASF Cantine"}],["$","meta","2",{"name":"author","content":"RASF"}],["$","link","3",{"rel":"manifest","href":"/manifest.json"}],["$","meta","4",{"name":"keywords","content":"cantine,réservation,repas,RASF,restaurant administratif"}],["$","meta","5",{"name":"format-detection","content":"telephone=no"}],["$","meta","6",{"name":"mobile-web-app-capable","content":"yes"}],["$","meta","7",{"name":"apple-mobile-web-app-title","content":"RASF"}],["$","meta","8",{"name":"apple-mobile-web-app-status-bar-style","content":"default"}]]
