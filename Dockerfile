@@ -41,6 +41,9 @@ RUN pnpm run build
 FROM node:22-alpine AS runner
 WORKDIR /app
 
+RUN apk add --no-cache libc6-compat
+RUN corepack enable
+
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV PORT=3000
@@ -54,4 +57,8 @@ COPY --from=builder /app/package.json ./package.json
 
 EXPOSE 3000
 
+# On neutralise l'ENTRYPOINT de l'image Node
+ENTRYPOINT []
+
+# Et on lance pnpm directement (qui est dans le PATH grâce à corepack enable)
 CMD ["pnpm", "run", "start"]
