@@ -1,5 +1,62 @@
 {
-  "node": {},
+  "node": {
+    "1fe328a64ee263b019efa7c68153a436dd80423a": {
+      "workers": {
+        "app/(protected)/dashboard/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fspidersnake%2FDownloads%2FCantine%2Fsrc%2Fapp%2Factions%2Freservations.ts%22%2C%5B%22upsertReservationAction%22%2C%22updateReservationStatusAction%22%2C%22deleteReservationAction%22%5D%5D%5D&__client_imported__=true!"
+      },
+      "layer": {
+        "app/(protected)/dashboard/page": "action-browser"
+      }
+    },
+    "c4a008e2d395faf53c76c71c78f10918ae1c90c9": {
+      "workers": {
+        "app/(protected)/dashboard/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fspidersnake%2FDownloads%2FCantine%2Fsrc%2Fapp%2Factions%2Freservations.ts%22%2C%5B%22upsertReservationAction%22%2C%22updateReservationStatusAction%22%2C%22deleteReservationAction%22%5D%5D%5D&__client_imported__=true!"
+      },
+      "layer": {
+        "app/(protected)/dashboard/page": "action-browser"
+      }
+    },
+    "ed8207fa46c28c7da633f2587ca8dba311cdc9e8": {
+      "workers": {
+        "app/(protected)/dashboard/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fspidersnake%2FDownloads%2FCantine%2Fsrc%2Fapp%2Factions%2Freservations.ts%22%2C%5B%22upsertReservationAction%22%2C%22updateReservationStatusAction%22%2C%22deleteReservationAction%22%5D%5D%5D&__client_imported__=true!"
+      },
+      "layer": {
+        "app/(protected)/dashboard/page": "action-browser"
+      }
+    },
+    "1d078f328ac45ffb8a84e4fda23c0cbe90f68a7c": {
+      "workers": {
+        "app/(protected)/gestion/menus/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fspidersnake%2FDownloads%2FCantine%2Fsrc%2Fapp%2Factions%2Fmenus.ts%22%2C%5B%22upsertMenuAction%22%2C%22duplicateWeekAction%22%2C%22togglePublishMenuAction%22%2C%22deleteMenuAction%22%5D%5D%5D&__client_imported__=true!"
+      },
+      "layer": {
+        "app/(protected)/gestion/menus/page": "action-browser"
+      }
+    },
+    "21dfea7aebca65d1f1f3cb170c4dd91b3b7ea404": {
+      "workers": {
+        "app/(protected)/gestion/menus/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fspidersnake%2FDownloads%2FCantine%2Fsrc%2Fapp%2Factions%2Fmenus.ts%22%2C%5B%22upsertMenuAction%22%2C%22duplicateWeekAction%22%2C%22togglePublishMenuAction%22%2C%22deleteMenuAction%22%5D%5D%5D&__client_imported__=true!"
+      },
+      "layer": {
+        "app/(protected)/gestion/menus/page": "action-browser"
+      }
+    },
+    "39892698ee02eacd0824aff438c8e942a6a6dd1c": {
+      "workers": {
+        "app/(protected)/gestion/menus/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fspidersnake%2FDownloads%2FCantine%2Fsrc%2Fapp%2Factions%2Fmenus.ts%22%2C%5B%22upsertMenuAction%22%2C%22duplicateWeekAction%22%2C%22togglePublishMenuAction%22%2C%22deleteMenuAction%22%5D%5D%5D&__client_imported__=true!"
+      },
+      "layer": {
+        "app/(protected)/gestion/menus/page": "action-browser"
+      }
+    },
+    "487a4f902c6bacd44a019d49f6e59d5c73d82215": {
+      "workers": {
+        "app/(protected)/gestion/menus/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fspidersnake%2FDownloads%2FCantine%2Fsrc%2Fapp%2Factions%2Fmenus.ts%22%2C%5B%22upsertMenuAction%22%2C%22duplicateWeekAction%22%2C%22togglePublishMenuAction%22%2C%22deleteMenuAction%22%5D%5D%5D&__client_imported__=true!"
+      },
+      "layer": {
+        "app/(protected)/gestion/menus/page": "action-browser"
+      }
+    }
+  },
   "edge": {},
-  "encryptionKey": "72GpZlpzdysbzG70qvJBbHxLRLKGGPeLdvDLUJK7ncM="
+  "encryptionKey": "wydW4Aqfyv3pzA3aWWvTgR/BzVvGi1xWUssVBgCISwk="
 }

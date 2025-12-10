@@ -1,10 +1,11 @@
 {
-  "/page": "app/page.js",
-  "/api/auth/[...nextauth]/route": "app/api/auth/[...nextauth]/route.js",
-  "/api/settings/route": "app/api/settings/route.js",
-  "/api/reservations/[id]/route": "app/api/reservations/[id]/route.js",
-  "/api/menus/route": "app/api/menus/route.js",
+  "/api/users/route": "app/api/users/route.js",
   "/api/reservations/route": "app/api/reservations/route.js",
-  "/auth/login/page": "app/auth/login/page.js",
-  "/(protected)/dashboard/page": "app/(protected)/dashboard/page.js"
+  "/api/auth/[...nextauth]/route": "app/api/auth/[...nextauth]/route.js",
+  "/page": "app/page.js",
+  "/(protected)/dashboard/page": "app/(protected)/dashboard/page.js",
+  "/(protected)/admin/page": "app/(protected)/admin/page.js",
+  "/(protected)/gestion/page": "app/(protected)/gestion/page.js",
+  "/(protected)/gestion/menus/page": "app/(protected)/gestion/menus/page.js",
+  "/auth/login/page": "app/auth/login/page.js"
 }

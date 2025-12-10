@@ -4,13 +4,17 @@
 // Modal de réservation / modification
 // =============================================================================
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useTransition } from "react";
 import { format, isToday } from "date-fns";
 import { fr } from "date-fns/locale";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import { Alert } from "@/components/ui/alert";
-import { useSettings, canModifyForDate } from "@/hooks/use-settings";
+import { canModifyForDate } from "@/lib/settings-utils";
+import {
+  upsertReservationAction,
+  deleteReservationAction,
+} from "@/app/actions/reservations";
 
 interface MenuOption {
   id: string;
@@ -41,6 +45,8 @@ interface ReservationModalProps {
   menu: Menu;
   existingReservation: Reservation | null;
   onSuccess: () => void;
+  userId: string;
+  deadlineTime: string;
 }
 
 export function ReservationModal({
@@ -50,17 +56,18 @@ export function ReservationModal({
   menu,
   existingReservation,
   onSuccess,
+  userId,
+  deadlineTime,
 }: ReservationModalProps) {
-  const { settings } = useSettings();
   const [starterId, setStarterId] = useState<string>("");
   const [mainId, setMainId] = useState<string>("");
   const [dessertId, setDessertId] = useState<string>("");
   const [consumptionMode, setConsumptionMode] = useState<"SUR_PLACE" | "A_EMPORTER">("SUR_PLACE");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition();
 
   const isEditing = !!existingReservation;
-  const deadlineTime = settings?.reservationDeadline || "10:00";
   const deadlineStatus = canModifyForDate(date, deadlineTime);
 
   // Initialiser les valeurs avec la réservation existante
@@ -90,38 +97,24 @@ export function ReservationModal({
       return;
     }
 
-    try {
-      const payload = {
-        date: format(date, "yyyy-MM-dd"),
-        mainOptionId: mainId,
-        starterOptionId: starterId || undefined,
-        dessertOptionId: dessertId || undefined,
-        consumptionMode,
-      };
-
-      const url = isEditing
-        ? `/api/reservations/${existingReservation.id}`
-        : "/api/reservations";
-      const method = isEditing ? "PATCH" : "POST";
-
-      const res = await fetch(url, {
-        method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.error || "Erreur lors de la sauvegarde");
+    startTransition(async () => {
+      try {
+        await upsertReservationAction({
+          reservationId: existingReservation?.id,
+          userId,
+          date: format(date, "yyyy-MM-dd"),
+          mainOptionId: mainId,
+          starterOptionId: starterId || null,
+          dessertOptionId: dessertId || null,
+          consumptionMode,
+        });
+        onSuccess();
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Une erreur est survenue");
+      } finally {
+        setIsLoading(false);
       }
-
-      onSuccess();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Une erreur est survenue");
-    } finally {
-      setIsLoading(false);
-    }
+    });
   };
 
   const handleDelete = async () => {
@@ -131,23 +124,16 @@ export function ReservationModal({
     setIsLoading(true);
     setError(null);
 
-    try {
-      const res = await fetch(`/api/reservations/${existingReservation.id}`, {
-        method: "DELETE",
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.error || "Erreur lors de l'annulation");
+    startTransition(async () => {
+      try {
+        await deleteReservationAction(existingReservation.id);
+        onSuccess();
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Une erreur est survenue");
+      } finally {
+        setIsLoading(false);
       }
-
-      onSuccess();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Une erreur est survenue");
-    } finally {
-      setIsLoading(false);
-    }
+    });
   };
 
   if (!isOpen) return null;
@@ -329,7 +315,7 @@ export function ReservationModal({
               >
                 Fermer
               </Button>
-              <Button type="submit" isLoading={isLoading} className="flex-1">
+              <Button type="submit" isLoading={isLoading || isPending} className="flex-1">
                 {isEditing ? "Modifier" : "Réserver"}
               </Button>
             </div>

@@ -4,10 +4,21 @@
 // Usage: npm run db:seed
 // =============================================================================
 
+import "dotenv/config";
 import { PrismaClient, Role, AccountStatus, CourseType, ConsumptionMode } from "@prisma/client";
+import { Pool } from "pg";
+import { PrismaPg } from "@prisma/adapter-pg";
 import bcrypt from "bcryptjs";
 
-const prisma = new PrismaClient();
+const databaseUrl = process.env.DATABASE_URL;
+if (!databaseUrl) {
+  throw new Error("DATABASE_URL manquant pour le seed");
+}
+
+const pool = new Pool({ connectionString: databaseUrl });
+const adapter = new PrismaPg(pool);
+
+const prisma = new PrismaClient({ adapter });
 
 async function main() {
   console.log("🌱 Début du seeding...");

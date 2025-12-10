@@ -4,11 +4,12 @@
 // Modal de duplication de semaine
 // =============================================================================
 
-import { useState } from "react";
-import { format, startOfWeek, addWeeks, addDays } from "date-fns";
+import { useState, useTransition } from "react";
+import { format, startOfWeek, addWeeks } from "date-fns";
 import { fr } from "date-fns/locale";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
+import { duplicateWeekAction } from "@/app/actions/menus";
 
 interface DuplicateWeekModalProps {
   isOpen: boolean;
@@ -46,6 +47,7 @@ export function DuplicateWeekModal({ isOpen, onClose, onSuccess }: DuplicateWeek
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<{ created: number; skipped: number } | null>(null);
+  const [isPending, startTransition] = useTransition();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,35 +55,25 @@ export function DuplicateWeekModal({ isOpen, onClose, onSuccess }: DuplicateWeek
     setResult(null);
     setIsLoading(true);
 
-    try {
-      const res = await fetch("/api/menus/duplicate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+    startTransition(async () => {
+      try {
+        const data = await duplicateWeekAction({
           sourceWeekStart: sourceWeek,
           targetWeekStart: targetWeek,
           overwrite,
-        }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.error || "Erreur lors de la duplication");
+        });
+        setResult({ created: data.created ?? 0, skipped: data.skipped ?? 0 });
+        if (data.created > 0) {
+          setTimeout(() => {
+            onSuccess();
+          }, 1200);
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Une erreur est survenue");
+      } finally {
+        setIsLoading(false);
       }
-
-      setResult(data.data);
-      
-      if (data.data.created > 0) {
-        setTimeout(() => {
-          onSuccess();
-        }, 2000);
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Une erreur est survenue");
-    } finally {
-      setIsLoading(false);
-    }
+    });
   };
 
   if (!isOpen) return null;
@@ -184,7 +176,7 @@ export function DuplicateWeekModal({ isOpen, onClose, onSuccess }: DuplicateWeek
               <Button type="button" variant="secondary" onClick={onClose} className="flex-1">
                 Annuler
               </Button>
-              <Button type="submit" isLoading={isLoading} className="flex-1">
+              <Button type="submit" isLoading={isLoading || isPending} className="flex-1">
                 Dupliquer
               </Button>
             </div>

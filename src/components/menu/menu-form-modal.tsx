@@ -4,12 +4,13 @@
 // Modal de création/modification de menu
 // =============================================================================
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useTransition } from "react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Alert } from "@/components/ui/alert";
+import { upsertMenuAction } from "@/app/actions/menus";
 
 interface MenuOption {
   id?: string;
@@ -55,6 +56,7 @@ export function MenuFormModal({
   
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition();
 
   const isEditing = !!existingMenu;
 
@@ -133,58 +135,45 @@ export function MenuFormModal({
 
     setIsLoading(true);
 
-    try {
-      // Préparer les options
-      const allOptions = [
-        ...starters.filter((s) => s.name.trim()).map((s, i) => ({
-          id: s.id,
-          courseType: "STARTER" as const,
-          name: s.name.trim(),
-          sortOrder: i,
-        })),
-        ...validMains.map((m, i) => ({
-          id: m.id,
-          courseType: "MAIN" as const,
-          name: m.name.trim(),
-          sortOrder: i,
-        })),
-        ...desserts.filter((d) => d.name.trim()).map((d, i) => ({
-          id: d.id,
-          courseType: "DESSERT" as const,
-          name: d.name.trim(),
-          sortOrder: i,
-        })),
-      ];
+    startTransition(async () => {
+      try {
+        const allOptions = [
+          ...starters.filter((s) => s.name.trim()).map((s, i) => ({
+            id: s.id,
+            courseType: "STARTER" as const,
+            name: s.name.trim(),
+            sortOrder: i,
+          })),
+          ...validMains.map((m, i) => ({
+            id: m.id,
+            courseType: "MAIN" as const,
+            name: m.name.trim(),
+            sortOrder: i,
+          })),
+          ...desserts.filter((d) => d.name.trim()).map((d, i) => ({
+            id: d.id,
+            courseType: "DESSERT" as const,
+            name: d.name.trim(),
+            sortOrder: i,
+          })),
+        ];
 
-      const payload = {
-        date: format(date, "yyyy-MM-dd"),
-        sideDishes: sideDishes.trim() || null,
-        notes: notes.trim() || null,
-        isPublished,
-        options: allOptions,
-      };
+        await upsertMenuAction({
+          menuId: existingMenu?.id,
+          date: format(date, "yyyy-MM-dd"),
+          sideDishes: sideDishes.trim() || null,
+          notes: notes.trim() || null,
+          isPublished,
+          options: allOptions,
+        });
 
-      const url = isEditing ? `/api/menus/${existingMenu.id}` : "/api/menus";
-      const method = isEditing ? "PATCH" : "POST";
-
-      const res = await fetch(url, {
-        method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.error || "Erreur lors de la sauvegarde");
+        onSuccess();
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Une erreur est survenue");
+      } finally {
+        setIsLoading(false);
       }
-
-      onSuccess();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Une erreur est survenue");
-    } finally {
-      setIsLoading(false);
-    }
+    });
   };
 
   if (!isOpen) return null;
@@ -391,7 +380,7 @@ export function MenuFormModal({
               <Button type="button" variant="secondary" onClick={onClose} className="flex-1">
                 Annuler
               </Button>
-              <Button type="submit" isLoading={isLoading} className="flex-1">
+              <Button type="submit" isLoading={isLoading || isPending} className="flex-1">
                 {isEditing ? "Enregistrer" : "Créer le menu"}
               </Button>
             </div>
